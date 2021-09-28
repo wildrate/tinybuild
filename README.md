@@ -6,3 +6,14 @@ Docker build image for MCU's.
 
 Currently supports:
  - Raspberry Pi Pico
+
+Example to use image to compile code locally:
+'''
+#!/usr/bin/env bash
+# Assumes local $PWD/src folder
+
+docker pull wildrate/tinybuild:latest
+mkdir build
+docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tinybuild cmake ../src
+docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tinybuild make
+'''
