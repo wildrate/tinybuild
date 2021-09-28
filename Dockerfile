@@ -1,4 +1,4 @@
-# Copyright 2020 (c) 2021 Wildrate.
+# Copyright (c) 2021 Wildrate.
 #
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the
 # following conditions are met:
@@ -27,7 +27,7 @@ MAINTAINER Wildrate <hello@wildrate.org>
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# The toolchain for the cross- compiler (note as well build-essential required)
+# The toolchain for the cross-compiler (note as well build-essential required)
 RUN apt-get update && apt-get -y --no-install-recommends install \
     cmake \
     gcc-arm-none-eabi \
@@ -45,7 +45,7 @@ RUN git clone https://github.com/raspberrypi/pico-sdk.git
 WORKDIR /tmp/pico-sdk
 RUN git submodule update --init
 
-# This is where everything wil happen
+# This is where everything will happen
 WORKDIR /tmp
 ENV PICO_SDK_PATH=/tmp/pico-sdk
 
