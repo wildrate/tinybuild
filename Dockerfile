@@ -48,7 +48,7 @@ RUN apt-get -y --no-install-recommends install \
     openssh-server
 
 # Have to generate some keys for SSH
-ssh-keygen -A    
+RUN ssh-keygen -A    
     
 # Set up the SSH server
 RUN mkdir /var/run/sshd
