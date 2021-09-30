@@ -43,8 +43,12 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
 
 # This gets rysnc and ssh installed
 RUN apt-get -y --no-install-recommends install \
+    sudo \
     rsync \
     openssh-server
+
+# Have to generate some keys for SSH
+ssh-keygen -A    
     
 # Set up the SSH server
 RUN mkdir /var/run/sshd
