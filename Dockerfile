@@ -60,7 +60,7 @@ WORKDIR /opt/pico-sdk
 RUN git submodule update --init
 
 # Create tiny user (also creates group)...
-RUN useradd -ms /bin/bash -G sudo -g tiny tiny 
+RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 tiny 
 RUN echo "tiny:tiny" | chpasswd
 USER tiny
 
