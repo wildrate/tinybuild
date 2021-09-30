@@ -23,6 +23,9 @@
 FROM ubuntu:latest
 MAINTAINER Wildrate <hello@wildrate.org>
 
+# Do the following as root
+USER root
+
 # Have to set this to avoid any interactivity when tzdata is installed
 ENV TZ=Europe/London
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -35,22 +38,45 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     libstdc++-arm-none-eabi-newlib \
     build-essential \
     git-all \
+    gdbserver \
     python3
 
-# Just put everything into /tmp
-WORKDIR /tmp
+# This gets rysnc and ssh installed
+RUN apt-get -y --no-install-recommends install \
+    rsync \
+    openssh-server
+    
+# Set up the SSH server
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+# Just put everything into /opt
+WORKDIR /opt
 RUN git clone https://github.com/raspberrypi/pico-sdk.git
 
 # Make sure modules loaded in
-WORKDIR /tmp/pico-sdk
+WORKDIR /opt/pico-sdk
 RUN git submodule update --init
 
-# This is where everything will happen
-WORKDIR /tmp
-ENV PICO_SDK_PATH=/tmp/pico-sdk
+# Create tiny user (also creates group)...
+RUN useradd -ms /bin/bash tiny && echo "tiny:tiny" | chpasswd && adduser tiny sudo && usermod -a -G video tiny
+USER tiny
 
-#CMD ["cmake"]
-# For debug - enable this to enter with docker run -it tinyspot-rp2040
-#ENTRYPOINT ["/bin/bash"]
-#COPY CMakeLists.txt main.c
-#RUN mkdir build; cd build; cmake ..
+# Make sure environment set for them
+ENV PICO_SDK_PATH=/opt/pico-sdk
+
+# Ready to go
+WORKDIR /home/tiny
+
+# Set the docker shell to be bash instead!
+SHELL ["/bin/bash", "-c"]
+
+# Ports exposed for remote connection and debugging
+EXPOSE 22 2159
+
+# Set it running
+ENTRYPOINT service ssh restart && bash
