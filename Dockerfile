@@ -39,6 +39,7 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     build-essential \
     git-all \
     gdbserver \
+    gdb \
     python3
 
 # This gets rysnc and ssh installed
