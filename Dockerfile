@@ -78,6 +78,6 @@ SHELL ["/bin/bash", "-c"]
 EXPOSE 22 2159
 
 # Set it running
-ENTRYPOINT sudo service ssh restart
-#ENTRYPOINT ["/bin/bash"]
-#CMD ["/usr/sbin/sshd", "-D", "-e", "-f", "/etc/ssh/sshd_config"]
+ENTRYPOINT ["/bin/bash","-l","-c"]
+CMD ["service","ssh","restart"]
+
