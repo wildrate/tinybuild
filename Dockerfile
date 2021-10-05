@@ -81,5 +81,5 @@ SHELL ["/bin/bash", "-c"]
 EXPOSE 22 2159
 
 # If run direct - just provide a shell
-ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/bin/bash"]
 
