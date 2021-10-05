@@ -54,7 +54,6 @@ RUN apt-get -y --no-install-recommends install \
 
 # (critically) Add a SSH remote server
 # See: https://pages.github.coecis.cornell.edu/cs5450/website/assignments/p1/docker.html
-RUN apt-get install openssh-server -y
 RUN mkdir /var/run/sshd
 RUN echo 'root:root' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -65,7 +64,12 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # Ports exposed for remote connection and debugging
 EXPOSE 22 2159
 
+
+# Set the docker shell to be bash instead!
+SHELL ["/bin/bash", "-c"]
+
 # Need to set it running here (as root)
+CMD service ssh restart
 #CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
 
 # Just put everything into /tmp
@@ -87,11 +91,6 @@ ENV PICO_SDK_PATH=/tmp/pico-sdk
 # Ready to go
 WORKDIR /home/tiny
 
-# Set the docker shell to be bash instead!
-SHELL ["/bin/bash", "-c"]
-
-# Get it started
-ENTRYPOINT service ssh restart && bash
 # If run direct - just provide a shell
-#ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]
 
