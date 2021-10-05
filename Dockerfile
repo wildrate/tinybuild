@@ -49,17 +49,16 @@ RUN apt-get -y --no-install-recommends install \
     openssh-server
 
 # Have to generate some keys for SSH
-#RUN ssh-keygen -A    
-#RUN service ssh start
+RUN ssh-keygen -A    
 
 # (critically) Add a SSH remote server
 # See: https://pages.github.coecis.cornell.edu/cs5450/website/assignments/p1/docker.html
-RUN mkdir /var/run/sshd
-RUN echo 'root:root' | chpasswd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
+#RUN mkdir /var/run/sshd
+#RUN echo 'root:root' | chpasswd
+#RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+#RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+#ENV NOTVISIBLE "in users profile"
+#RUN echo "export VISIBLE=now" >> /etc/profile
 
 # Ports exposed for remote connection and debugging
 EXPOSE 22 2159
@@ -69,7 +68,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Need to set it running here (as root)
 CMD service ssh restart
-#CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
+CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
 
 # Just put everything into /tmp
 WORKDIR /tmp
