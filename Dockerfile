@@ -52,6 +52,9 @@ RUN apt-get -y --no-install-recommends install \
 RUN ssh-keygen -A    
 RUN service ssh start
 
+# Need to set it running here (as root)
+CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
+
 # Just put everything into /opt
 WORKDIR /opt
 RUN git clone https://github.com/raspberrypi/pico-sdk.git
@@ -77,7 +80,6 @@ SHELL ["/bin/bash", "-c"]
 # Ports exposed for remote connection and debugging
 EXPOSE 22 2159
 
-# Set it running
+# If run direct - just provide a shell
 ENTRYPOINT ["/bin/bash"]
-CMD ["service","ssh","restart"]
 
