@@ -66,29 +66,29 @@ EXPOSE 22 2159
 # Set the docker shell to be bash instead!
 SHELL ["/bin/bash", "-c"]
 
-# Need to set it running here (as root)
-CMD service ssh restart
-#CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
-
-# Just put everything into /tmp
-WORKDIR /tmp
-RUN git clone https://github.com/raspberrypi/pico-sdk.git
-
-# Make sure modules loaded in
-WORKDIR /tmp/pico-sdk
-RUN git submodule update --init
-
 # Create tiny user (also creates group)...
-RUN useradd -rm -d /home/ubuntu -s /bin/bash -g root -G sudo -u 1000 tiny 
+RUN useradd -rm -d /home/tiny -s /bin/bash -g root -G sudo -u 1000 tiny 
 RUN echo "tiny:tiny" | chpasswd
 USER tiny
 
+# Just put everything into /lib
+WORKDIR /home/tiny/lib
+RUN git clone https://github.com/raspberrypi/pico-sdk.git
+
+# Make sure modules loaded in
+WORKDIR /home/tiny/lib/pico-sdk
+RUN git submodule update --init
+
 # Make sure environment set for them
-ENV PICO_SDK_PATH=/tmp/pico-sdk
+ENV PICO_SDK_PATH=/home/tiny/lib/pico-sdk
 
 # Ready to go
 WORKDIR /home/tiny
 
-# If run direct - just provide a shell
-ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
-
+# Run as root to launch
+#ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
+# Need to set it running here (as root)
+#CMD service ssh restart
+#CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
+USER root
+ENTRYPOINT service ssh restart && bash
