@@ -68,7 +68,7 @@ SHELL ["/bin/bash", "-c"]
 
 # Need to set it running here (as root)
 CMD service ssh restart
-CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
+#CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
 
 # Just put everything into /tmp
 WORKDIR /tmp
