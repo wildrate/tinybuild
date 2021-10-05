@@ -49,18 +49,31 @@ RUN apt-get -y --no-install-recommends install \
     openssh-server
 
 # Have to generate some keys for SSH
-RUN ssh-keygen -A    
-RUN service ssh start
+#RUN ssh-keygen -A    
+#RUN service ssh start
+
+# (critically) Add a SSH remote server
+# See: https://pages.github.coecis.cornell.edu/cs5450/website/assignments/p1/docker.html
+RUN apt-get install openssh-server -y
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
+
+# Ports exposed for remote connection and debugging
+EXPOSE 22 2159
 
 # Need to set it running here (as root)
-CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
+#CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
 
-# Just put everything into /opt
-WORKDIR /opt
+# Just put everything into /tmp
+WORKDIR /tmp
 RUN git clone https://github.com/raspberrypi/pico-sdk.git
 
 # Make sure modules loaded in
-WORKDIR /opt/pico-sdk
+WORKDIR /tmp/pico-sdk
 RUN git submodule update --init
 
 # Create tiny user (also creates group)...
@@ -69,7 +82,7 @@ RUN echo "tiny:tiny" | chpasswd
 USER tiny
 
 # Make sure environment set for them
-ENV PICO_SDK_PATH=/opt/pico-sdk
+ENV PICO_SDK_PATH=/tmp/pico-sdk
 
 # Ready to go
 WORKDIR /home/tiny
@@ -77,9 +90,8 @@ WORKDIR /home/tiny
 # Set the docker shell to be bash instead!
 SHELL ["/bin/bash", "-c"]
 
-# Ports exposed for remote connection and debugging
-EXPOSE 22 2159
-
+# Get it started
+ENTRYPOINT service ssh restart && bash
 # If run direct - just provide a shell
 #ENTRYPOINT ["/bin/bash"]
 
