@@ -64,7 +64,6 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 # Ports exposed for remote connection and debugging
 EXPOSE 22 2159
 
-
 # Set the docker shell to be bash instead!
 SHELL ["/bin/bash", "-c"]
 
@@ -92,5 +91,5 @@ ENV PICO_SDK_PATH=/tmp/pico-sdk
 WORKDIR /home/tiny
 
 # If run direct - just provide a shell
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
 
