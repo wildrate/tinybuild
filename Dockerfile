@@ -78,6 +78,6 @@ SHELL ["/bin/bash", "-c"]
 EXPOSE 22 2159
 
 # Set it running
-ENTRYPOINT ["/bin/bash","-l","-c"]
+ENTRYPOINT ["/bin/bash"]
 CMD ["service","ssh","restart"]
 
