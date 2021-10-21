@@ -71,17 +71,6 @@ RUN useradd -rm -d /home/tiny -s /bin/bash -g root -G sudo -u 1000 tiny
 RUN echo "tiny:tiny" | chpasswd
 USER tiny
 
-# Just put everything into /lib
-WORKDIR /home/tiny/lib
-RUN git clone https://github.com/raspberrypi/pico-sdk.git
-
-# Make sure modules loaded in
-WORKDIR /home/tiny/lib/pico-sdk
-RUN git submodule update --init
-
-# Make sure environment set for them
-ENV PICO_SDK_PATH=/home/tiny/lib/pico-sdk
-
 # Ready to go
 WORKDIR /home/tiny
 
