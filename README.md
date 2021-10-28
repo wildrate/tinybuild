@@ -21,8 +21,25 @@ docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tiny
 ## Example to launch a local image to develop on:
 ```
 # After you run this you should be able to login via SSH on port 3022
-# > ssh -P 3022 tiny@localhost
+# > ssh -p 3022 tiny@localhost
 # password is also 'tiny'
     
-docker run --rm -it -p 3022:22 -p 7777:7777 -p 9999:9999 --privileged --name tinybuild ghcr.io/wildrate/tinybuild:latest
+docker run --rm -it -p 3022:22 -p 7777:7777 -p 9999:9999 --name tinybuild ghcr.io/wildrate/tinybuild:latest
+```
+
+## Example to include use to build a github action
+```
+# As part of your cmake.yml fil
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    # Use the tinybuild container here!
+    container:
+      image: ghcr.io/wildrate/tinybuild:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    # Rest of build commands to follow...
 ```
