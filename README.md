@@ -5,7 +5,7 @@
 Docker build image for MCU's.
 
 Currently supports:
- - Raspberry Pi Pico
+ - Raspberry Pi Pico [Arm Cortex-M0+ processors toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
 
 ## Example to use image to compile code locally:
 ```
@@ -27,9 +27,10 @@ docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tiny
 docker run --rm -it -p 3022:22 -p 7777:7777 -p 9999:9999 --name tinybuild ghcr.io/wildrate/tinybuild:latest
 ```
 
-## Example to include use to build a github action
+## Example to include to build a github action
 ```
-# As part of your cmake.yml fil
+# As part of your cmake.yml file
+
 jobs:
   build:
     runs-on: ubuntu-latest
