@@ -20,8 +20,10 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-FROM ubuntu:latest
-MAINTAINER Wildrate <hello@wildrate.org>
+# Need this particular version of ubuntu to avoid: 
+# https://askubuntu.com/questions/1408528/apt-update-on-ubuntu22-04-results-in-error-100-on-some-docker-hosts
+FROM ubuntu:20.04 
+LABEL maintainer Wildrate<hello@wildrate.org>
 
 # Do the following as root
 USER root
@@ -33,14 +35,13 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # The toolchain for the cross-compiler (note as well build-essential required)
 RUN apt-get update && apt-get -y --no-install-recommends install \
     cmake \
-    gcc-arm-none-eabi \
-    libnewlib-arm-none-eabi \
-    libstdc++-arm-none-eabi-newlib \
     build-essential \
     git-all \
     gdbserver \
     gdb \
-    python3
+    gcc-arm-none-eabi \
+    libnewlib-arm-none-eabi \
+    libstdc++-arm-none-eabi-newlib
 
 # This gets rysnc and ssh installed
 RUN apt-get -y --no-install-recommends install \
@@ -51,7 +52,7 @@ RUN apt-get -y --no-install-recommends install \
 # Have to generate some keys for SSH
 RUN ssh-keygen -A    
 
-# (critically) Add a SSH remote server
+# Add a SSH remote server if want do remotely connect to this image
 # See: https://pages.github.coecis.cornell.edu/cs5450/website/assignments/p1/docker.html
 #RUN mkdir /var/run/sshd
 #RUN echo 'root:root' | chpasswd

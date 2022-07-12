@@ -7,7 +7,11 @@ Docker build image for MCU's.
 Currently supports:
  - Raspberry Pi Pico [Arm Cortex-M0+ processors toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm)
 
-## Example to use image to compile code locally:
+## Build image to test locally
+
+> docker build -t tinybuild -f Dockerfile . 
+
+## Example to then use image to compile code locally:
 ```
 #!/usr/bin/env bash
 # Assumes local $PWD/src folder
@@ -18,7 +22,7 @@ docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tiny
 docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tinybuild make
 ```
 
-## Example to launch a local image to develop on:
+## Example to launch a local image to develop on via SSH:
 ```
 # After you run this you should be able to login via SSH on port 3022
 # > ssh -p 3022 tiny@localhost
@@ -27,7 +31,7 @@ docker run --rm -v $PWD/src:/tmp/src -v $PWD/build:/tmp/build -w /tmp/build tiny
 docker run --rm -it -p 3022:22 --name tinybuild ghcr.io/wildrate/tinybuild:latest
 ```
 
-## Example to include to build a github action
+## Example to include to build a github action (once image published under ghcr):
 ```
 # As part of your cmake.yml file
 
