@@ -19,6 +19,12 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+###############################################################################
+# Test locally with: 
+#   docker build -t tinybuild .
+#   docker run -rm tinybuild cmake
+###############################################################################
 
 # Need this particular version of ubuntu to avoid: 
 # https://askubuntu.com/questions/1408528/apt-update-on-ubuntu22-04-results-in-error-100-on-some-docker-hosts
@@ -39,30 +45,22 @@ RUN apt-get update && apt-get -y --no-install-recommends install \
     git-all \
     gdbserver \
     gdb \
+    python3 \
     gcc-arm-none-eabi \
     libnewlib-arm-none-eabi \
     libstdc++-arm-none-eabi-newlib
 
-# This gets rysnc and ssh installed
-RUN apt-get -y --no-install-recommends install \
-    sudo \
-    rsync \
-    openssh-server
+# This gets rysnc and ssh installed if running as a remote environment
+#RUN apt-get -y --no-install-recommends install \
+#    sudo \
+#    rsync \
+#    openssh-server
 
-# Have to generate some keys for SSH
-RUN ssh-keygen -A    
+# Have to generate some keys for SSH as well 
+# RUN ssh-keygen -A    
 
-# Add a SSH remote server if want do remotely connect to this image
-# See: https://pages.github.coecis.cornell.edu/cs5450/website/assignments/p1/docker.html
-#RUN mkdir /var/run/sshd
-#RUN echo 'root:root' | chpasswd
-#RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-#RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-#ENV NOTVISIBLE "in users profile"
-#RUN echo "export VISIBLE=now" >> /etc/profile
-
-# Ports exposed for remote connection and debugging
-EXPOSE 22 2159
+## Ports exposed for remote connection and debugging
+#EXPOSE 22 2159
 
 # Set the docker shell to be bash instead!
 SHELL ["/bin/bash", "-c"]
@@ -80,5 +78,8 @@ WORKDIR /home/tiny
 # Need to set it running here (as root)
 #CMD service ssh restart
 #CMD ["/usr/sbin/sshd","-D","-e","-f","/etc/ssh/sshd_config"]
-USER root
-ENTRYPOINT service ssh restart && bash
+# Run ssh and bash if required
+#USER root
+#ENTRYPOINT service ssh restart && bash
+
+ENTRYPOINT [ "/bin/bash", "-l", "-c" ]
